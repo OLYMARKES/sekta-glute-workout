@@ -298,7 +298,8 @@
     }
     .library-card h3 { margin: 0; font-size: 15px; line-height: 1.2; }
     .library-card p { margin: 7px 0 12px; color: var(--muted); font-size: 11px; }
-    .library-card button {
+    .library-card button,
+    .library-card__video {
       min-height: 36px;
       margin-top: auto;
       border: 1px solid var(--line);
@@ -307,10 +308,17 @@
       color: var(--ink);
       font-size: 12px;
       font-weight: 850;
+      text-decoration: none;
       cursor: pointer;
     }
-    .library-card button:hover { border-color: var(--ink); }
-    .library-card.is-selected button { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+    .library-card button:hover,
+    .library-card__video:hover { border-color: var(--ink); }
+    .library-card.is-selected [data-library-add] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+    .library-card__actions { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; margin-top: auto; }
+    .library-card__actions.is-single { grid-template-columns: 1fr; }
+    .library-card__actions button,
+    .library-card__actions a { display: flex; min-height: 36px; align-items: center; justify-content: center; margin-top: 0; padding: 0 10px; }
+    .library-card__video { color: var(--accent-dark) !important; }
     .library-empty {
       grid-column: 1 / -1;
       padding: 44px 24px;
@@ -318,6 +326,91 @@
       border-radius: var(--radius-md);
       color: var(--muted);
       text-align: center;
+    }
+    .video-library-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .video-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      transition: border-color .18s ease, transform .18s ease;
+    }
+    .video-card:hover { border-color: #b8b7b0; transform: translateY(-1px); }
+    .video-card__preview {
+      position: relative;
+      display: block;
+      width: 100%;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: #171817;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .video-card__preview img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+    .video-card__play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      display: grid;
+      width: 54px;
+      height: 54px;
+      place-items: center;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      font-size: 19px;
+    }
+    .video-card__body { padding: 16px; }
+    .video-card__meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 9px; }
+    .video-card h2 { margin: 0; font-size: 17px; line-height: 1.2; letter-spacing: -.02em; }
+    .video-card p { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
+    .exercise-video-preview {
+      margin: 0 0 20px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #171817;
+    }
+    .exercise-video-preview figcaption {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 12px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .exercise-video-preview figcaption a {
+      flex: 0 0 auto;
+      color: inherit;
+      font-size: 11px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .exercise-video-preview iframe {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      background: #000;
     }
     .builder-panel {
       position: sticky;
@@ -646,9 +739,11 @@
     .calendar-insight .button { min-height: 40px; padding: 0 14px; font-size: 12px; }
 
     body[data-active-program="library"] .nav,
+    body[data-active-program="video"] .nav,
     body[data-active-program="calendar"] .nav,
     body[data-active-program="cardio"] .nav,
     body[data-active-program="library"] .mobile-timer-button,
+    body[data-active-program="video"] .mobile-timer-button,
     body[data-active-program="calendar"] .mobile-timer-button,
     body[data-active-program="cardio"] .mobile-timer-button { display: none !important; }
 
@@ -1919,7 +2014,7 @@
         grid-row: 2;
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
       }
       .primary-nav-button { min-width: 0; padding: 0 8px; font-size: 11px; }
       .workout-picker-shell { grid-column: 2; grid-row: 1; width: 100%; }
@@ -1968,6 +2063,7 @@
       }
       .library-toolbar .field:first-child { grid-column: 1 / -1; }
       .exercise-library-grid { grid-template-columns: 1fr; }
+      .video-library-grid { grid-template-columns: 1fr; }
       .library-card { min-height: 0; }
       .builder-row { grid-template-columns: 26px minmax(0, 1fr) 54px 68px 30px; padding-inline: 9px; }
       .rules-card { padding: 20px; }
@@ -2070,6 +2166,7 @@
       <nav class="primary-navigation" aria-label="Разделы страницы">
         <button class="primary-nav-button" id="section-training" type="button" aria-selected="true" data-section-tab="training">Тренировки</button>
         <button class="primary-nav-button" id="section-library" type="button" aria-selected="false" data-section-tab="library">Библиотека</button>
+        <button class="primary-nav-button" id="section-video" type="button" aria-selected="false" data-section-tab="video">Видео</button>
         <button class="primary-nav-button" id="section-calendar" type="button" aria-selected="false" data-section-tab="calendar">Календарь</button>
         <button class="primary-nav-button" id="section-cardio" type="button" aria-selected="false" data-section-tab="cardio">Кардио</button>
       </nav>
@@ -5017,6 +5114,22 @@
       </section>
     </div>
 
+    <div class="program-view" id="program-video" role="region" aria-labelledby="section-video" data-program="video" hidden>
+      <section class="tool-header" aria-labelledby="video-library-title">
+        <div class="tool-header__copy">
+          <p class="eyebrow">20 коротких роликов · реальная техника</p>
+          <h1 id="video-library-title">Видео упражнений</h1>
+          <p>Короткие демонстрации из зала: стартовая позиция, рабочая амплитуда и темп движения. Ролики с точным совпадением также открываются прямо из карточек тренировок.</p>
+        </div>
+        <div class="tool-header__stat">
+          <strong>20</strong>
+          <span>видео в библиотеке</span>
+        </div>
+      </section>
+
+      <section class="video-library-grid" id="video-library-grid" aria-label="Видео упражнений"></section>
+    </div>
+
     <div class="program-view" id="program-calendar" role="region" aria-labelledby="section-calendar" data-program="calendar" hidden>
       <section class="tool-header" aria-labelledby="calendar-title">
         <div class="tool-header__copy">
@@ -5392,7 +5505,7 @@
           document.querySelector(".skip-link").href = "#cardio-plan";
           return;
         }
-        if (program === "library" || program === "calendar") return;
+        if (program === "library" || program === "video" || program === "calendar") return;
         const prefix = prefixes[program] || "";
         document.querySelectorAll("[data-nav-target]").forEach((link) => {
           const target = link.dataset.navTarget;
@@ -5402,12 +5515,12 @@
       };
 
       const activateProgram = (program, updateUrl = true) => {
-        activeProgram = ["glutes", "legs", "lower", "upper", "push", "core", "library", "calendar", "cardio"].includes(program) ? program : "glutes";
+        activeProgram = ["glutes", "legs", "lower", "upper", "push", "core", "library", "video", "calendar", "cardio"].includes(program) ? program : "glutes";
         programViews.forEach((view) => {
           const isActive = view.dataset.program === activeProgram;
           view.hidden = !isActive;
         });
-        const activeSection = ["library", "calendar", "cardio"].includes(activeProgram) ? activeProgram : "training";
+        const activeSection = ["library", "video", "calendar", "cardio"].includes(activeProgram) ? activeProgram : "training";
         sectionTabs.forEach((tab) => {
           const isActive = tab.dataset.sectionTab === activeSection;
           tab.setAttribute("aria-selected", String(isActive));
@@ -5497,7 +5610,7 @@
       loadProgress();
       updateProgress();
       const requestedProgram = new URL(window.location.href).searchParams.get("program");
-      const initialProgram = ["legs", "lower", "upper", "push", "core", "library", "calendar", "cardio"].includes(requestedProgram) ? requestedProgram : "glutes";
+      const initialProgram = ["legs", "lower", "upper", "push", "core", "library", "video", "calendar", "cardio"].includes(requestedProgram) ? requestedProgram : "glutes";
       activateProgram(initialProgram, false);
 
       const timerPanels = [...document.querySelectorAll("[data-timer-panel]")];
@@ -5677,6 +5790,29 @@
         });
       });
 
+      const videoCatalog = [
+        { ex: "EX_1", name: "Подъёмы гантелей в стороны", duration: 15, exerciseId: "push-lateral", embed: "https://kinescope.io/embed/b8b8b801-5681-4818-ad36-22a704967615", share: "https://kinescope.io/oNZwNME4WD7635cz27DN1n", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/fdc3afe7-970e-42c6-950d-376fc99c8a51/poster_lg/01a03dcc-2125-7e84-97a1-459fc3c58083.jpg" },
+        { ex: "EX_2", name: "Обратный выпад с гантелями", duration: 13, exerciseId: null, note: "Дополнительное упражнение", embed: "https://kinescope.io/embed/8905ce6f-ecac-4b75-9739-0faa730e12fc", share: "https://kinescope.io/hVnninEt2cgJWDuZbnmAfq", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/7736d1a2-38db-4ccc-84a7-6edbe508cad9/poster_lg/01a03dd7-d4b4-76c8-94a2-5bc33689fc5a.jpg" },
+        { ex: "EX_3", name: "Румынская тяга", duration: 15, exerciseId: "rdl", embed: "https://kinescope.io/embed/7dac46eb-2157-4556-875e-0ee7bfa681af", share: "https://kinescope.io/gw5FqPX6ry2tg4tuAoE7Pz", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/3093b6fd-068f-4960-92d9-c97f9d31b03a/poster_lg/01a03dd2-c8ee-7f37-bd62-09c27410e6dd.jpg" },
+        { ex: "EX_4", name: "Сгибание рук с гантелями сидя", duration: 14, exerciseId: "upper-biceps", embed: "https://kinescope.io/embed/f48bda5f-fccc-4bae-97a0-e87c128459e5", share: "https://kinescope.io/wcsMZyVGA3srVXCJ7JLTFB", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/33aaa2fb-fa4f-4713-9280-5d3d1594c720/poster_lg/01a03dd8-fa4a-7487-9c40-50d2ca4d806a.jpg" },
+        { ex: "EX_5", name: "Наклонный жим гантелей", duration: 15, exerciseId: "push-incline", embed: "https://kinescope.io/embed/5e83b8cf-4666-4d6d-ad29-9a455a4a67d1", share: "https://kinescope.io/cEVrvcaeMjbGUbBd7HFjHp", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/f08174a1-e252-4125-9cb2-4593526769a7/poster_lg/01a03dd4-1577-7a82-8298-44ce70c0df42.jpg" },
+        { ex: "EX_6", name: "Подъёмы на носки сидя", duration: 13, exerciseId: "lower-calf", embed: "https://kinescope.io/embed/e420e39a-5f7d-4e55-bd77-8fd4f470796c", share: "https://kinescope.io/uaSNYeKj6CDQKbg1E9khN9", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/c87b6a3b-0f68-47b0-b6eb-2f46a1c117fd/poster_lg/01a03dd4-5081-7b78-898b-6588398d618f.jpg" },
+        { ex: "EX_7", name: "Подъёмы на носки стоя", duration: 14, exerciseId: "legs-calf", embed: "https://kinescope.io/embed/d7c3822f-ea27-4dc2-9084-7eac95cd83ba", share: "https://kinescope.io/sDjtosFfUavptN4qyr7MyE", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/151a3a46-d242-49af-9a62-3cad307498dd/poster_lg/01a03dd4-d997-79f4-86ef-cd2a7306556f.jpg" },
+        { ex: "EX_8", name: "Ягодичный мост со штангой", duration: 15, exerciseId: "hip", embed: "https://kinescope.io/embed/ef97650f-f867-4821-8d25-e4bdfe75f2dd", share: "https://kinescope.io/vzYvVQEsAP2NKKE8SJNj7H", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/6a4a3ec6-5475-49b5-8467-7738ea8bbd2e/poster_lg/01a03dd2-406e-7a7b-a052-71767c91acc3.jpg" },
+        { ex: "EX_9", name: "Ягодичный мост со штангой · второй ракурс", duration: 15, exerciseId: null, note: "Дополнительная демонстрация", embed: "https://kinescope.io/embed/8371e38a-bdb2-447a-b289-124aeb833593", share: "https://kinescope.io/heqkQmwBWrF2nW7zWGoyt6", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/65380bed-549b-4778-885a-42e05ce05eca/poster_lg/01a03dd3-663c-747b-9c9e-67af3fe279c0.jpg" },
+        { ex: "EX_10", name: "Обратная бабочка", duration: 15, exerciseId: "upper-reverse", embed: "https://kinescope.io/embed/5eef8400-9684-45ca-a805-4a2994224e1f", share: "https://kinescope.io/cHWmrbQxUcUwTWHj77uGFH", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/c410c572-e80e-40ea-bda7-6f60fac3afb2/poster_lg/01a03dd2-d6b9-7644-987f-0abff21eab80.jpg" },
+        { ex: "EX_11", name: "Жим от груди в тренажёре", duration: 15, exerciseId: "push-chest-press", embed: "https://kinescope.io/embed/fd8e562a-a969-474e-9e89-cfa2beb08a17", share: "https://kinescope.io/xiZr5WVxW5snaSUzasZ798", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/57748ddc-f15c-43a0-9f96-bc28e20ebcbf/poster_lg/01a03dd2-1963-7151-a104-0017182d7e5e.jpg" },
+        { ex: "EX_12", name: "Жим вверх в тренажёре", duration: 15, exerciseId: "push-shoulder-press", embed: "https://kinescope.io/embed/a3fe1e07-a0fb-4d50-91a4-2cf5a49e1693", share: "https://kinescope.io/mfwHH5YqVTbxWQLbxj83xM", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/e71283e8-9a9f-4e24-9132-6b6e70817003/poster_lg/01a03dd6-bd5f-7e48-a640-d1cfd35d48d3.jpg" },
+        { ex: "EX_13", name: "Подъём коленей в упоре", duration: 9, exerciseId: "core-knee-raise", embed: "https://kinescope.io/embed/ac4c59ea-178c-49fa-895d-6413feca45bd", share: "https://kinescope.io/nh1SJt1NfPdsaN9xYh6DQz", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/a0aade95-01c9-423f-81e1-28531dce053f/poster_lg/01a03dd9-feaf-7391-b3c4-29d126464f7f.jpg" },
+        { ex: "EX_14", name: "Отведение ноги назад в блоке", duration: 15, exerciseId: "kick", embed: "https://kinescope.io/embed/c130ab40-fcb8-46a7-bae8-77202b101edf", share: "https://kinescope.io/pRDnVNUcdbAx5JXb3nervR", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/e11ed5b5-a5f2-414b-8de3-daa3208326ed/poster_lg/01a03dd5-c42c-700b-8eea-bdd215a89003.jpg" },
+        { ex: "EX_15", name: "Разгибание рук на блоке", duration: 9, exerciseId: "upper-triceps", embed: "https://kinescope.io/embed/90b18791-715e-4130-9ed3-dc1279532a1f", share: "https://kinescope.io/iSiPJJqCfL1tjFX3BUXnut", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/7b1ec373-652b-4960-a425-680789549d7e/poster_lg/01a03dd2-66bd-7ba4-9a76-bf03e4f2ac25.jpg" },
+        { ex: "EX_16", name: "Жим Палофа", duration: 15, exerciseId: "core-pallof", embed: "https://kinescope.io/embed/05017939-a93a-47c9-9f79-9718e106af55", share: "https://kinescope.io/0BRoZkQV9kRg8muAruJHxt", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/26dbed05-12a3-44b3-abb9-7d94f1e55dd7/poster_lg/01a03dd4-ae8e-7397-a762-8b4b4d881f52.jpg" },
+        { ex: "EX_17", name: "Вертикальная тяга к груди", duration: 14, exerciseId: "upper-pulldown", embed: "https://kinescope.io/embed/4cfc7960-6308-44cc-ae40-fe0978f34cda", share: "https://kinescope.io/avoaiHZFZbfwVoAymCmWD1", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/82efa281-63a4-4d63-a705-852a65654026/poster_lg/01a03dd8-d2b6-729e-ab9e-d2b8d2b2ca0c.jpg" },
+        { ex: "EX_18", name: "Горизонтальная тяга сидя", duration: 13, exerciseId: "upper-row", embed: "https://kinescope.io/embed/a10d04c9-c059-4c4c-a07d-702011a71ea4", share: "https://kinescope.io/kTsGmN2f8FftYzZhsDgYHj", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/32961903-3fc4-454a-90eb-25add54a8292/poster_lg/01a03dd8-fa13-7c8d-a3b1-16dea9fc7b50.jpg" },
+        { ex: "EX_19", name: "Отведение бёдер в тренажёре", duration: 13, exerciseId: "abd", embed: "https://kinescope.io/embed/f86f02e3-9eaf-45f1-85fd-c884545de335", share: "https://kinescope.io/wFiABSnnbABSBgaxUhVkXc", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/88805907-8184-422a-934b-e9feb029a1a8/poster_lg/01a03dd1-68ed-7890-9b4c-5397b586f328.jpg" },
+        { ex: "EX_20", name: "Гиперэкстензия 45°", duration: 13, exerciseId: "core-back-extension", embed: "https://kinescope.io/embed/db52d05a-7e08-4ca0-8f7a-05c680a3c1c5", share: "https://kinescope.io/t5PdfJ1oJ3dvt91H57y5G6", poster: "https://edge-ams-1.kinescopecdn.net/ca32f3d2-fe95-449e-b414-ec9cccdb6dce/posters/876c342b-1e70-42f8-b1a3-e73e99230027/poster_lg/01a03dd1-2e12-7d22-b32e-b7c82a21eca6.jpg" }
+      ];
+
       const exerciseCatalog = [
         { id: "hip", name: "Ягодичный мост со штангой", group: "Низ тела", equipment: "Штанга", pattern: "Таз", sets: 3, reps: "8–10", cue: "Тяжёлая база для ягодиц" },
         { id: "rdl", name: "Румынская тяга", group: "Низ тела", equipment: "Гантели", pattern: "Таз", sets: 3, reps: "8–10", cue: "Задняя поверхность бедра и ягодицы" },
@@ -5724,6 +5860,49 @@
         '"': "&quot;",
         "'": "&#039;"
       })[character]);
+      const videoByExercise = new Map(videoCatalog.filter((video) => video.exerciseId).map((video) => [video.exerciseId, video]));
+      const videoLibraryGrid = document.querySelector("#video-library-grid");
+
+      const formatVideoDuration = (seconds) => `0:${String(seconds).padStart(2, "0")}`;
+
+      const renderVideoLibrary = () => {
+        videoLibraryGrid.innerHTML = videoCatalog.map((video) => `
+          <article class="video-card">
+            <a class="video-card__preview" href="${video.share}" target="_blank" rel="noopener noreferrer" aria-label="Смотреть: ${escapeHtml(video.name)}">
+              <img src="${video.poster}" alt="Кадр упражнения «${escapeHtml(video.name)}»" loading="lazy">
+              <span class="video-card__play" aria-hidden="true">▶</span>
+            </a>
+            <div class="video-card__body">
+              <div class="video-card__meta">
+                <span class="meta-chip">${video.ex}</span>
+                <span class="meta-chip">${formatVideoDuration(video.duration)}</span>
+                ${video.note ? `<span class="meta-chip">${escapeHtml(video.note)}</span>` : `<span class="meta-chip">Есть в тренировках</span>`}
+              </div>
+              <h2>${escapeHtml(video.name)}</h2>
+              <p>${video.exerciseId ? "Открывается также из карточки упражнения." : "Сохранено в полной видео-библиотеке курса."}</p>
+            </div>
+          </article>`).join("");
+      };
+
+      const attachExerciseVideoButtons = () => {
+        videoByExercise.forEach((video, exerciseId) => {
+          const weightLog = document.querySelector(`[data-weight-log="${exerciseId}"]`);
+          const notes = weightLog?.closest(".exercise-card")?.querySelector(".exercise-notes");
+          if (!notes || notes.querySelector(".exercise-video-preview")) return;
+          const preview = document.createElement("figure");
+          preview.className = "exercise-video-preview";
+          preview.innerHTML = `
+            <figcaption>
+              <span>Смотреть технику · ${video.ex}</span>
+              <a href="${video.share}" target="_blank" rel="noopener noreferrer">Отдельно ↗</a>
+            </figcaption>
+            <iframe src="${video.embed}" title="Техника: ${escapeHtml(video.name)}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+          notes.prepend(preview);
+        });
+      };
+
+      renderVideoLibrary();
+      attachExerciseVideoButtons();
 
       const getExerciseImage = (id) => {
         const log = document.querySelector(`[data-weight-log="${id}"]`);
@@ -5758,6 +5937,7 @@
         }
         libraryGrid.innerHTML = filtered.map((exercise) => {
           const selected = builderItems.some((item) => item.id === exercise.id);
+          const video = videoByExercise.get(exercise.id);
           return `
             <article class="library-card${selected ? " is-selected" : ""}">
               <img src="${getExerciseImage(exercise.id)}" alt="" loading="lazy">
@@ -5768,7 +5948,10 @@
                 </div>
                 <h3>${exercise.name}</h3>
                 <p>${exercise.sets} × ${exercise.reps} · ${exercise.cue}</p>
-                <button type="button" data-library-add="${exercise.id}" aria-pressed="${selected}">${selected ? "Добавлено ✓" : "Добавить в тренировку"}</button>
+                <div class="library-card__actions${video ? "" : " is-single"}">
+                  ${video ? `<a class="library-card__video" href="${video.share}" target="_blank" rel="noopener noreferrer" aria-label="Смотреть видео: ${escapeHtml(exercise.name)}">▶ Видео</a>` : ""}
+                  <button type="button" data-library-add="${exercise.id}" aria-pressed="${selected}">${selected ? "Добавлено ✓" : "Добавить в тренировку"}</button>
+                </div>
               </div>
             </article>`;
         }).join("");
