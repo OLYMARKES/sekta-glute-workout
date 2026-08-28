@@ -105,6 +105,10 @@
     .technique { min-width: 0; }
     .media { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-lg) var(--r-lg) 0 0; background: #e3e6e1; }
     .media img { width: 100%; aspect-ratio: 16 / 8.8; display: block; object-fit: contain; background: #eeeae4; }
+    .media[data-mode="video"] { aspect-ratio: 16 / 9; background: #000; }
+    .media[data-mode="video"] img { display: none; }
+    .media[data-mode="video"] .media-status,
+    .media[data-mode="video"] .video-button { display: none !important; }
     .media-status { position: absolute; top: 14px; left: 14px; min-height: 34px; display: inline-flex; align-items: center; gap: 8px; padding: 0 11px; border-radius: var(--r-md); background: var(--forest); color: #fff; font-size: 11px; font-weight: 780; }
     .media-status i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); }
     .video-button { position: absolute; right: 14px; bottom: 14px; min-height: 40px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,.4); border-radius: var(--r-md); padding: 0 12px; background: rgba(14,43,29,.92); color: #fff; font-size: 11px; font-weight: 760; cursor: pointer; }
@@ -198,11 +202,13 @@
       .workout-head { align-items: start; flex-direction: column; margin-bottom: 16px; }
       .workout-head h1 { font-size: 30px; }
       .head-measure { width: 100%; }
-      .route { overflow-x: auto; grid-template-columns: repeat(5, minmax(106px,1fr)); scrollbar-width: none; }
+      .route { overflow-x: auto; grid-template-columns: repeat(5, minmax(148px,1fr)); scrollbar-width: none; scroll-snap-type: x proximity; }
       .route::-webkit-scrollbar { display: none; }
-      .route-step { min-height: 76px; grid-template-columns: 28px minmax(0,1fr); padding: 10px; }
+      .route-step { min-height: 82px; grid-template-columns: 24px minmax(0,1fr); align-items: start; padding: 13px 11px 11px; scroll-snap-align: start; }
       .route-num { font-size: 21px; }
-      .media img { aspect-ratio: 4 / 3; }
+      .route-copy strong { min-height: 28px; overflow: visible; text-overflow: clip; white-space: normal; line-height: 1.25; }
+      .route-copy span { margin-top: 3px; }
+      .media img { aspect-ratio: 2 / 1; }
       .cues { grid-template-columns: 1fr; }
       .cue { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
       .cue:last-child { border-bottom: 0; }
@@ -342,7 +348,7 @@
       $('#lastWeight').textContent=localStorage.getItem(`sekta-console-weight-${item.id}`)?`прошлая запись: ${localStorage.getItem(`sekta-console-weight-${item.id}`)} кг`:'прошлая запись: —';
       state.reps=item.baseReps; state.rir=item.rir;
       $('#reps').textContent=state.reps; $('#rir').textContent=state.rir; $('#restReadout').textContent=formatTime(item.rest);
-      $('#videoButton').style.display=item.video?'inline-flex':'none'; $('#media iframe')?.remove();
+      $('#videoButton').style.display=item.video?'inline-flex':'none'; $('#media iframe')?.remove(); $('#media').removeAttribute('data-mode');
       renderCues(item); renderSetTabs(); renderRoute(); renderAction(); updateProgress();
     }
     function updateProgress(){const done=countDone();$('#overallProgress').textContent=`${done} / ${totalSets}`;$('#saveState').textContent=done?`сохранено: ${done} из ${totalSets}`:state.started?'тренировка идёт':'готово к старту'}
@@ -376,7 +382,7 @@
     $('#addRest').addEventListener('click',()=>{state.restRemaining+=15;state.restTotal+=15;renderRest()});
     $('#skipRest').addEventListener('click',advance);
     $('#safetyButton').addEventListener('click',()=>{$('#safetyCopy').dataset.open=$('#safetyCopy').dataset.open!=='true'});
-    $('#videoButton').addEventListener('click',()=>{const item=exercises[state.exercise];if(!item.video)return;const iframe=document.createElement('iframe');iframe.src=`${item.video}?autoplay=1&muted=1`;iframe.title=`Видео техники: ${item.short}`;iframe.allow='autoplay; fullscreen; picture-in-picture';iframe.allowFullscreen=true;$('#media').prepend(iframe)});
+    $('#videoButton').addEventListener('click',()=>{const item=exercises[state.exercise];if(!item.video)return;const iframe=document.createElement('iframe');iframe.src=`${item.video}?autoplay=1&muted=1`;iframe.title=`Видео техники: ${item.short}`;iframe.allow='autoplay; fullscreen; picture-in-picture';iframe.allowFullscreen=true;$('#media').dataset.mode='video';$('#media').prepend(iframe)});
     $('#finishButton').addEventListener('click',closeFinish);
     renderExercise();
   </script>
