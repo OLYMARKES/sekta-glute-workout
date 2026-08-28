@@ -321,8 +321,10 @@
     const checkIcon = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
 
     function renderRoute(){
-      $('#route').innerHTML=exercises.map((item,index)=>`<button class="route-step" type="button" data-route="${index}" ${index===state.exercise?'aria-current="step"':''} data-complete="${exerciseDone(index)}" ${index>state.exercise&&!exerciseDone(index-1)?'disabled':''}><span class="route-num">${exerciseDone(index)?'✓':index+1}</span><span class="route-copy"><strong>${item.short}</strong><span>${item.sets} × ${item.reps}</span></span></button>`).join('');
+      $('#route').innerHTML=exercises.map((item,index)=>`<button class="route-step" type="button" data-route="${index}" ${index===state.exercise?'aria-current="step"':''} data-complete="${exerciseDone(index)}"><span class="route-num">${exerciseDone(index)?'✓':index+1}</span><span class="route-copy"><strong>${item.short}</strong><span>${item.sets} × ${item.reps}</span></span></button>`).join('');
       $$('[data-route]').forEach(button=>button.addEventListener('click',()=>{state.exercise=Number(button.dataset.route);state.set=firstOpenSet(state.exercise);stopRest();renderExercise()}));
+      const current=$('#route [aria-current="step"]');
+      if(current&&window.matchMedia('(max-width: 760px)').matches)requestAnimationFrame(()=>current.scrollIntoView({block:'nearest',inline:'center'}));
     }
     function renderCues(item){$('#cues').innerHTML=item.cues.map((cue,index)=>`<div class="cue ${index===2?'cue--warning':''}"><strong>${index===2?'ОШИБКА':`КЛЮЧ ${index+1}`}</strong><p>${cue}</p></div>`).join('')}
     function renderSetTabs(){
